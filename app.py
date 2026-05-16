@@ -7,7 +7,7 @@ from sklearn.naive_bayes import MultinomialNB
 st.set_page_config(page_title="AI Spam Filter", page_icon="🔒", layout="centered")
 
 st.title("🔒 AI Message Spam Classifier")
-st.write("Final Semester BSc Academic Project Demo")
+st.write("Final Semester BSc Academic Project")
 st.write("---")
 
 @st.cache_resource
