@@ -1,1 +1,39 @@
-{"nbformat":4,"nbformat_minor":0,"metadata":{"colab":{"provenance":[],"authorship_tag":"ABX9TyMzS2NqBnfyg1siidLpetla"},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"cells":[{"cell_type":"code","execution_count":null,"metadata":{"id":"ie0Th7OnQFaY"},"outputs":[],"source":["import streamlit as st\n","import pandas as pd\n","from sklearn.model_selection import train_test_split\n","from sklearn.feature_extraction.text import CountVectorizer\n","from sklearn.naive_bayes import MultinomialNB\n","\n","st.set_page_config(page_title=\"AI Spam Filter\", page_icon=\"🔒\", layout=\"centered\")\n","\n","st.title(\"🔒 AI Message Spam Classifier\")\n","st.write(\"Final Semester BSc Academic Project Demo\")\n","st.write(\"---\")\n","\n","@st.cache_resource\n","def train_model():\n","    # Reads the dataset from your GitHub folder\n","    df = pd.read_csv('spam.csv', sep='\\t', names=['label', 'message'], encoding='latin-1', on_bad_lines='skip')\n","    df = df.dropna()\n","    X_train, X_test, y_train, y_test = train_test_split(df['message'], df['label'], test_size=0.2, random_state=42)\n","    cv = CountVectorizer(stop_words='english')\n","    X_train_numeric = cv.fit_transform(X_train)\n","    model = MultinomialNB()\n","    model.fit(X_train_numeric, y_train)\n","    return model, cv\n","\n","model, cv = train_model()\n","\n","user_input = st.text_area(\"Paste or type your message here:\", placeholder=\"Enter SMS text...\")\n","\n","if st.button(\"Scan Message\"):\n","    if user_input.strip() != \"\":\n","        numeric_input = cv.transform([user_input])\n","        prediction = model.predict(numeric_input)[0]\n","\n","        if prediction == 'spam':\n","            st.error(\"⚠️ WARNING: This message looks like SPAM!\")\n","        else:\n","            st.success(\"✅ SAFE: This message is regular HAM.\")\n","    else:\n","        st.warning(\"Please enter some text first.\")"]}]}
+import streamlit as st
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
+st.set_page_config(page_title="AI Spam Filter", page_icon="🔒", layout="centered")
+
+st.title("🔒 AI Message Spam Classifier")
+st.write("Final Semester BSc Academic Project Demo")
+st.write("---")
+
+@st.cache_resource
+def train_model():
+    # Reads the dataset from your GitHub folder
+    df = pd.read_csv('spam.csv', sep='\t', names=['label', 'message'], encoding='latin-1', on_bad_lines='skip')
+    df = df.dropna()
+    X_train, X_test, y_train, y_test = train_test_split(df['message'], df['label'], test_size=0.2, random_state=42)
+    cv = CountVectorizer(stop_words='english')
+    X_train_numeric = cv.fit_transform(X_train)
+    model = MultinomialNB()
+    model.fit(X_train_numeric, y_train)
+    return model, cv
+
+model, cv = train_model()
+
+user_input = st.text_area("Paste or type your message here:", placeholder="Enter SMS text...")
+
+if st.button("Scan Message"):
+    if user_input.strip() != "":
+        numeric_input = cv.transform([user_input])
+        prediction = model.predict(numeric_input)[0]
+        
+        if prediction == 'spam':
+            st.error("⚠️ WARNING: This message looks like SPAM!")
+        else:
+            st.success("✅ SAFE: This message is regular HAM.")
+    else:
+        st.warning("Please enter some text first.")
